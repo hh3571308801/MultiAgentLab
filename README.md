@@ -433,6 +433,5 @@ MIT License — see [LICENSE](LICENSE)
 
 ## 👤 Author
 
-Northwest University, School of Intelligent Computing Engineering — B.Sc. Computer Science, Class of 2024
-Focus: explainable multi-agent systems / LLM evaluation
+An undergraduate student of Computer Science, interested in explainable multi-agent systems and LLM evaluation.
 Contact: open a GitHub Issue
