@@ -30,6 +30,9 @@ logs/
 docs/images/deepseek_signin.png
 docs/images/local_*.png
 
+# 一次性推送工具（本地辅助，不入库）
+push_to_github.py
+
 # OS
 .DS_Store
 Thumbs.db
