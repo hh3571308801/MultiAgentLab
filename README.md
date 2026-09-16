@@ -431,6 +431,13 @@ MIT License — see [LICENSE](LICENSE)
 
 ---
 
+## 🤝 Contributing
+
+Issues and Pull Requests are welcome.
+Before opening a PR, please read [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, code conventions, and testing rules.
+
+---
+
 ## 👤 Author
 
 An undergraduate student of Computer Science, interested in explainable multi-agent systems and LLM evaluation.
