@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Env & Secrets
+.env
+.env.local
+*.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project data
+data/trajectories/*
+!data/trajectories/.gitkeep
+logs/
+*.log
+
+# 含个人信息的本地截图（不公开）
+docs/images/deepseek_signin.png
+docs/images/local_*.png
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+.pytest_cache/
+htmlcov/
+.tox

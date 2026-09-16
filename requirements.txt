@@ -1,0 +1,18 @@
+# ===== Core =====
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+
+# ===== LLM =====
+openai==1.59.9        # DeepSeek / OpenAI 通用 SDK
+httpx==0.28.1         # 异步 HTTP（备用）
+tenacity==9.0.0       # 重试装饰器
+
+# ===== Utils =====
+python-dotenv==1.0.1
+python-multipart==0.0.20
+
+# ===== Test =====
+pytest==8.3.4
+pytest-asyncio==0.25.0
