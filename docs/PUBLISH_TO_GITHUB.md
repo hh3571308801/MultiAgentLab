@@ -13,7 +13,7 @@
 |------|--------|
 | **Repository name** | `MultiAgentLab` |
 | **Description** | `An observable & evaluable multi-LLM-agent collaboration framework with full trajectory recording` |
-| **Visibility** | ✅ **Public**（面试官要看，必须公开）|
+| **Visibility** | ✅ **Public**（开源项目必须公开）|
 | **Initialize this repository with** | ❌ **全部不勾**（README / .gitignore / license 都不要勾，否则会和本地冲突）|
 
 3. 点 **Create repository**
@@ -58,7 +58,7 @@ llm  agent  multi-agent  llm-agent  trajectory  evaluation  fastapi  python
 **勾选**：
 - ☑️ Releases
 - ☑️ Packages（可选）
-- ☑️ Discussions（**建议开**，面试时可以说"社区有人来讨论过"）
+- ☑️ Discussions（**建议开**，方便社区交流反馈）
 
 ---
 
@@ -127,7 +127,7 @@ jobs:
 
 ---
 
-## 六、面试时的 30 秒开场（备用）
+## 六、30 秒开场介绍（备用）
 
 > "这个项目解决的是多 Agent 系统'跑得好不好、为什么失败'的问题。现有框架如 CrewAI、AutoGPT 只关注能否跑通，但缺乏系统化的轨迹记录与评测。我实现了一个 Planner-Executor-Critic 三角色闭环框架，完整记录每一步的 thought/action/observation/token 消耗，并用真实 DeepSeek API 验证了端到端链路。下一步计划加入 LLM-as-Judge 自动评测和失败归因分析。"
 
@@ -135,7 +135,7 @@ jobs:
 
 ## 七、后续路线图（对应 README）
 
-| 版本 | 内容 | 面试价值 |
+| 版本 | 内容 | 展示价值 |
 |------|------|---------|
 | v0.2 | Vue3 + ECharts 轨迹时间线可视化 | 展示前端工程能力 |
 | v0.3 | 评测指标 + LLM-as-Judge 失败归因 | **论文核心创新点** |

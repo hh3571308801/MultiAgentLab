@@ -1,6 +1,6 @@
 # 架构设计文档
 
-> 本文档面向研究生面试 / 答辩场景，详细说明 MultiAgentLab 的设计动机、技术选型、模块边界与扩展点。
+> 本文档说明 MultiAgentLab 的设计动机、技术选型、模块边界与扩展点。
 
 ---
 
@@ -153,14 +153,3 @@ class Step(BaseModel):
 4. **接入评测**：实现 `backend/evaluation/` 子模块
 
 ---
-
-## 六、面试话术（30 秒 / 1 分钟 / 5 分钟三个版本）
-
-### 30 秒版
-> "我做的是 MultiAgentLab，一个多 LLM Agent 协作框架。核心创新是把'观测-评测-归因'一体化：跑完一个任务能直接告诉你哪个 Agent、哪一步、为什么失败，以及和 CrewAI 比起来好在哪。"
-
-### 1 分钟版
-> "现有 Agent 框架都只关心能不能跑通，缺系统化分析。我的项目 MultiAgentLab 用 Planner / Executor / Critic 三角色协作，每一步 thought、action、Token、时延全记录，然后用 LLM-as-Judge 自动评测并归因失败。整套轨迹 JSON 兼容我之前做的 Shellloop 平台，所以新项目不是从零开始，是迭代升级。"
-
-### 5 分钟版
-（自由发挥，从动机→架构→实验→创新点→未来工作）
