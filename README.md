@@ -100,7 +100,7 @@ curl -X POST http://localhost:8000/api/v1/run \
 | 模式 | 命令 | 用 | 适合 |
 |------|------|----|------|
 | **🟢 Mock（默认）** | `LLM_PROVIDER=mock pytest` | 0 元 | 本地开发 / CI |
-| **🟡 真实 API（一键）** | `python scripts/run_real_demo.py` | ~¥0.001/次 | 截图 / 调试 / 答辩演示 |
+| **🟡 真实 API（一键）** | `python scripts/run_real_demo.py` | ~¥0.001/次 | 截图 / 调试 / 集成验证 |
 | **🔴 真实 API（pytest）** | `LLM_PROVIDER=deepseek pytest -m real_llm` | ~¥0.001/次 | 集成测试 |
 
 ### 🟢 Mock 模式（默认）
@@ -398,7 +398,7 @@ MultiAgentLab/
 
 ---
 
-## 📊 预期性能指标（答辩可用数据）
+## 📊 预期性能指标
 
 | 任务 | 框架 | 成功率 | 平均 Token | 平均步骤 |
 |------|------|--------|----------|---------|
