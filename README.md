@@ -4,10 +4,13 @@
 >
 > *Observe, Measure, and Explain Multi-Agent Collaboration*
 
+[![Tests](https://github.com/hh3571308801/MultiAgentLab/actions/workflows/test.yml/badge.svg)](https://github.com/hh3571308801/MultiAgentLab/actions/workflows/test.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Trajectory](https://img.shields.io/badge/Trajectory-Shellloop%20Compatible-orange)](#trajectory-format-compatibility)
+
+> ⚙️ **如果你 fork 了这个项目**，记得把上方 badge 里的 `hh3571308801` 换成你自己的 GitHub 用户名，否则徽章不会显示。
 
 ---
 
@@ -312,7 +315,11 @@ MultiAgentLab/
 ├── docs/
 │   ├── architecture.md      # 详细架构设计
 │   ├── HOW_TO_REPLACE_MOCK.md # 替换 mock 为真实运行的指南
+│   ├── PUBLISH_TO_GITHUB.md # 发布到 GitHub 的完整步骤
 │   └── images/              # 真实运行截图占位
+├── .github/
+│   └── workflows/
+│       └── test.yml         # CI：自动跑 pytest（mock 模式）
 ├── pytest.ini
 ├── requirements.txt
 ├── .env.example
