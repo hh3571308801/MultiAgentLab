@@ -1,72 +1,72 @@
-# 发布到 GitHub 指南
+# Publishing to GitHub Guide
 
-> 本地仓库已就绪（`main` 分支，首次提交已完成）。以下是把它推上 GitHub 的完整步骤。
+> The local repo is ready (`main` branch, first commit done). Below are the full steps to push it to GitHub.
 
 ---
 
-## 一、创建远程仓库（2 分钟）
+## 1. Create the remote repository (2 minutes)
 
-1. 打开 https://github.com/new
-2. 填写：
+1. Open https://github.com/new
+2. Fill in the fields:
 
-| 字段 | 填什么 |
-|------|--------|
+| Field | Value |
+|-------|-------|
 | **Repository name** | `MultiAgentLab` |
 | **Description** | `An observable & evaluable multi-LLM-agent collaboration framework with full trajectory recording` |
-| **Visibility** | ✅ **Public**（开源项目必须公开）|
-| **Initialize this repository with** | ❌ **全部不勾**（README / .gitignore / license 都不要勾，否则会和本地冲突）|
+| **Visibility** | ✅ **Public** (open-source projects must be public) |
+| **Initialize this repository with** | ❌ **Check none** (don't check README / .gitignore / license, otherwise they'll conflict with local) |
 
-3. 点 **Create repository**
+3. Click **Create repository**
 
 ---
 
-## 二、推送到 GitHub（1 分钟）
+## 2. Push to GitHub (1 minute)
 
-创建后会看到一页命令提示，**只用看 "…or push an existing repository" 那一段**：
+After creating, you'll see a command hint page. **Only look at the "…or push an existing repository" section**:
 
 ```bash
 cd C:\Users\35713\Desktop\MultiAgentLab
 
-# 把 <你的GitHub用户名> 换成实际的（本机 git 配置是 hh3571308801）
-git remote add origin https://github.com/<你的GitHub用户名>/MultiAgentLab.git
+# Replace <your-github-username> with the actual one (this machine is configured as hh3571308801)
+git remote add origin https://github.com/<your-github-username>/MultiAgentLab.git
 
 git branch -M main
 git push -u origin main
 ```
 
-推送时会弹出登录窗口（浏览器授权或用 Personal Access Token）。
-**首次推送到 GitHub 需要 PAT**，如果没配过：
-GitHub → 右上角头像 → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → 勾选 `repo` 权限 → 复制，粘贴到密码框。
+A login window will pop up during push (browser authorization or Personal Access Token).
+**The first push to GitHub requires a PAT**. If you don't have one yet:
+GitHub → top-right avatar → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → check `repo` permission → copy it and paste it as the password.
 
 ---
 
-## 三、仓库设置（让项目"看起来专业"，5 分钟）
+## 3. Repository settings (make the project "look professional", 5 minutes)
 
-推到 GitHub 后，进仓库页面右上角 **⚙️ Settings** 旁边的 **About**（铅笔图标），填：
+After pushing, go to the repo page, top-right **⚙️ Settings** next to the **About** (pencil icon), and fill in:
 
-**Description**：
+**Description**:
 ```
 An observable & evaluable multi-LLM-agent collaboration framework with full trajectory recording.
 Planner → Executor → Critic loop | Multi-provider (DeepSeek/OpenAI/Qwen) | FastAPI | 33 tests
 ```
 
-**Topics**（逐个添加，共 8 个）：
+**Topics** (add one by one, 8 in total):
 ```
 llm  agent  multi-agent  llm-agent  trajectory  evaluation  fastapi  python
 ```
 
-**勾选**：
+**Check**:
 - ☑️ Releases
-- ☑️ Packages（可选）
-- ☑️ Discussions（**建议开**，方便社区交流反馈）
+- ☑️ Packages (optional)
+- ☑️ Discussions (**recommended**, for community feedback and Q&A)
 
 ---
 
-## 四、上线后立刻能加的 3 个加分项
+## 4. Three polish items you can add right after going live
 
-### 1. CI 徽章（自动跑测试，README 顶部会亮绿标）
+### 1. CI badge (auto-run tests, the badge at the top of README turns green)
 
-新建 `.github/workflows/test.yml`：
+Create `.github/workflows/test.yml`:
 
 ```yaml
 name: Tests
@@ -93,51 +93,50 @@ jobs:
           LLM_PROVIDER: mock
 ```
 
-然后在 README 顶部加：
-
+Then add to the top of README:
 ```markdown
-![Tests](https://github.com/<用户名>/MultiAgentLab/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/<username>/MultiAgentLab/actions/workflows/test.yml/badge.svg)
 ```
 
-> 注意：CI 里必须设 `LLM_PROVIDER=mock`，否则会尝试调真实 API（虽然默认已跳过 `real_llm`，双保险）。
+> Note: CI must set `LLM_PROVIDER=mock`, otherwise it will try to call real APIs (real_llm is already skipped by default, this is a double safety).
 
-### 2. 第一次 Release
+### 2. First release
 
-仓库页面右侧 **Releases** → **Create a new release** → Tag 填 `v0.1.0` → 标题 `v0.1.0 - Initial Release` → 描述里粘贴 README 的功能列表。
+On the repo page, right side **Releases** → **Create a new release** → Tag `v0.1.0` → title `v0.1.0 - Initial Release` → paste the feature list from README into the description.
 
-### 3. 真实运行截图
+### 3. Real-run screenshot
 
-把终端跑 `run_real_demo.py` 的输出截图，存到 `docs/images/real_run_screenshot.png`，然后在 README 的 Real Run Showcase 章节插入：
+Take a screenshot of the terminal output of `run_real_demo.py`, save it as `docs/images/real_run_screenshot.png`, then insert into the Real Run Showcase section of README:
 
 ```markdown
 ![Real Run](docs/images/real_run_screenshot.png)
 ```
 
-> ⚠️ 截图前先清屏，确保**不要截到 API Key**。
+> ⚠️ Clear the screen before screenshotting, make sure **no API key is captured**.
 
 ---
 
-## 五、推送前的自检清单
+## 5. Pre-push checklist
 
-- [ ] `.env` 没有被提交（`git status` 里看不到它）
-- [ ] `examples/sample_real_run.json` 里没有 API Key
-- [ ] 所有测试通过：`pytest`（应为 32 passed）
-- [ ] README 里的仓库链接/用户名如果是占位符，已替换
-- [ ] 仓库是 **Public**
-
----
-
-## 六、30 秒开场介绍（备用）
-
-> "这个项目解决的是多 Agent 系统'跑得好不好、为什么失败'的问题。现有框架如 CrewAI、AutoGPT 只关注能否跑通，但缺乏系统化的轨迹记录与评测。我实现了一个 Planner-Executor-Critic 三角色闭环框架，完整记录每一步的 thought/action/observation/token 消耗，并用真实 DeepSeek API 验证了端到端链路。下一步计划加入 LLM-as-Judge 自动评测和失败归因分析。"
+- [ ] `.env` is not committed (not visible in `git status`)
+- [ ] No API key inside `examples/sample_real_run.json`
+- [ ] All tests pass: `pytest` (should be 32 passed)
+- [ ] Repo URL / username placeholders in README are replaced
+- [ ] Repository is **Public**
 
 ---
 
-## 七、后续路线图（对应 README）
+## 6. 30-second opening pitch (backup)
 
-| 版本 | 内容 | 展示价值 |
-|------|------|---------|
-| v0.2 | Vue3 + ECharts 轨迹时间线可视化 | 展示前端工程能力 |
-| v0.3 | 评测指标 + LLM-as-Judge 失败归因 | **论文核心创新点** |
-| v0.4 | 与 CrewAI / AutoGPT 横向 benchmark | **论文对比实验** |
-| v0.5 | 论文初稿（EMNLP Findings / ACL Workshop / CCKS）| 研究成果 |
+> "This project tackles the question of 'how well multi-agent systems run, and why they fail'. Existing frameworks like CrewAI and AutoGPT only care about whether tasks complete, but they lack systematic trajectory recording and evaluation. I implemented a closed-loop Planner–Executor–Critic framework that fully records every step's thought/action/observation/token consumption, and verified the end-to-end pipeline with a real DeepSeek API. Next steps include adding LLM-as-Judge automatic evaluation and failure attribution analysis."
+
+---
+
+## 7. Subsequent roadmap (mirrors README)
+
+| Version | Content | Highlight |
+|---------|---------|-----------|
+| v0.2 | Vue3 + ECharts trajectory timeline visualization | Frontend engineering capability |
+| v0.3 | Evaluation metrics + LLM-as-Judge failure attribution | **Core paper novelty** |
+| v0.4 | Cross-framework benchmark against CrewAI / AutoGPT | **Paper comparison experiments** |
+| v0.5 | Paper draft (EMNLP Findings / ACL Workshop / CCKS) | Research output |

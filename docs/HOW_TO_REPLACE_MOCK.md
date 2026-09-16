@@ -1,181 +1,182 @@
-# 如何把 README 中的 Mock 占位替换成真实运行结果
+# How to Replace Mock Placeholders with Real Run Results in the README
 
-> ⏱ 预计耗时：**15-30 分钟**（包括注册 DeepSeek）
+> ⏱ Estimated time: **15–30 minutes** (including signing up for DeepSeek)
 >
-> 💰 预计花费：**¥1-2**（10 元充值能用几千次）
+> 💰 Estimated cost: **¥1–2** (a ¥10 top-up covers thousands of runs)
 
-本指南会带你把 README.md 里的所有 TODO 占位符替换成真实的 DeepSeek 运行结果，让你的 GitHub 项目"看起来像真的"。
-
----
-
-## Step 1：注册 DeepSeek 并充值（5 分钟）
-
-1. 打开 https://platform.deepseek.com
-2. 点击右上角"注册"（支持手机号或邮箱）
-3. 完成实名认证（学生用学号或身份证，可能免认证）
-4. 进入"充值"页面 → 充值 ¥10（够你跑几千次实验）
-5. 进入"API Keys"页面 → 点击"创建新 Key" → **立即复制保存**（只显示一次！）
+This guide walks you through replacing every TODO placeholder in README.md with real DeepSeek run results, so your GitHub project "looks real".
 
 ---
 
-## Step 2：配置 .env（1 分钟）
+## Step 1: Register on DeepSeek and top up (5 minutes)
+
+1. Open https://platform.deepseek.com
+2. Click "Sign up" at the top right (mobile or email supported)
+3. Complete real-name verification (students may use student ID or national ID, possibly exempted)
+4. Go to the "Top up" page → top up ¥10 (enough for thousands of runs)
+5. Go to the "API Keys" page → click "Create new Key" → **copy and save it immediately** (shown only once!)
+
+---
+
+## Step 2: Configure .env (1 minute)
 
 ```bash
 cd C:\Users\35713\Desktop\MultiAgentLab
 cp .env.example .env
 ```
 
-用记事本（或 VSCode）打开 `.env`，把这一行：
+Open `.env` in Notepad (or VSCode) and change this line:
 ```
 DEEPSEEK_API_KEY=your_deepseek_api_key_here
 ```
-改成：
+to:
 ```
 DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
-（你刚才复制的真实 key）
+(the real key you just copied)
 
-确认 `LLM_PROVIDER=deepseek` 这一行没被改动。
+Make sure the line `LLM_PROVIDER=deepseek` is unchanged.
 
 ---
 
-## Step 3：启动服务（1 分钟）
+## Step 3: Start the service (1 minute)
 
-打开第一个终端窗口：
+Open the first terminal window:
 ```bash
 cd C:\Users\35713\Desktop\MultiAgentLab
 python -m backend.main
 ```
 
-你应该看到这样的启动日志：
+You should see startup logs like this:
 ```
 ============================================================
-MultiAgentLab v0.1.0 启动
+MultiAgentLab v0.1.0 starting
 LLM Provider: deepseek | Model: deepseek-chat
 Max Rounds: 5 | Trajectory Dir: ./data/trajectories
 ============================================================
 INFO:     Uvicorn running on http://0.0.0.0:8000
 ```
 
-**如果报错 `Invalid API Key`**：检查 .env 文件是否正确保存（无 BOM 头、无多余空格）。
+**If you see `Invalid API Key`**: check that `.env` was saved correctly (no BOM header, no extra spaces).
 
 ---
 
-## Step 4：跑真实任务（30 秒）
+## Step 4: Run a real task (30 seconds)
 
-打开**第二个终端窗口**，运行：
+Open a **second terminal window** and run:
 ```bash
 curl -X POST http://localhost:8000/api/v1/run \
   -H "Content-Type: application/json" \
   -d @examples/math_problem.json
 ```
 
-你应该看到类似这样的输出（**这就是真实数据**，记下来）：
+You should see output similar to this (this is real data — copy it down):
 ```json
 {
   "run_id": "abc-123-def-456-...",
-  "task": "小红有 15 元钱，买了 3 支铅笔...",
+  "task": "Alice has 15 dollars, bought 3 pencils...",
   "status": "success",
   "rounds_used": 1,
   "total_steps": 4,
   "total_tokens": 850,
   "total_latency_ms": 3200,
-  "final_answer": "小红还剩 9 元钱。"
+  "final_answer": "Alice has 9 dollars left."
 }
 ```
 
-**注意真实的 final_answer 和 token 数**——下面要填到 README。
+**Note the real `final_answer` and token count** — you'll paste them into the README next.
 
 ---
 
-## Step 5：导出完整轨迹 JSON（30 秒）
+## Step 5: Export the full trajectory JSON (30 seconds)
 
-把上一步拿到的 `run_id` 用在这里：
+Use the `run_id` you got in the previous step:
 ```bash
-# 把 abc-123-def-456 替换成你的真实 run_id
+# Replace abc-123-def-456 with your real run_id
 curl -s http://localhost:8000/api/v1/trajectories/abc-123-def-456 > examples/sample_real_run.json
 ```
 
-或者直接复制 `./data/trajectories/{run_id}.json` 的内容覆盖 `examples/sample_real_run.json`。
+Or directly copy `./data/trajectories/{run_id}.json` and overwrite `examples/sample_real_run.json` with it.
 
 ---
 
-## Step 6：截一张运行截图（2 分钟）
+## Step 6: Take a screenshot of the run (2 minutes)
 
-在第二个终端里**截图保存**整段：
+In the second terminal, **take a screenshot** of the entire output:
 ```
-[你的终端截图内容]
+[your terminal screenshot content]
 $ curl -X POST http://localhost:8000/api/v1/run ...
 {"run_id": "...", "status": "success", ...}
 ```
 
-保存到：
+Save it to:
 ```
 docs/images/real_run_screenshot.png
 ```
 
-**截图小技巧**：
-- Windows：用 `Win + Shift + S` 截屏工具
-- Mac：用 `Cmd + Shift + 4`
-- 推荐把窗口放大、字体调大、黑色背景，看起来更专业
+**Screenshot tips**:
+- Windows: use `Win + Shift + S`
+- Mac: use `Cmd + Shift + 4`
+- Recommend enlarging the window, increasing font size, and using a dark background for a more professional look
 
 ---
 
-## Step 7：替换 README.md 的 TODO 占位符（5 分钟）
+## Step 7: Replace TODO placeholders in README.md (5 minutes)
 
-打开 `README.md`，找到"📸 Real Run Showcase"这一节，替换 3 处 TODO：
+Open `README.md`, find the "📸 Real Run Showcase" section, and replace 3 TODOs:
 
-### TODO 1：响应摘要
+### TODO 1: Response summary
 
-找到：
+Find:
 ```json
-"run_id": "TODO_真实_run_id",
+"run_id": "TODO_real_run_id",
 ...
-"final_answer": "TODO_真实答案"
+"final_answer": "TODO_real_answer"
 ```
 
-替换为 Step 4 的真实输出。
+Replace with the real output from Step 4.
 
-### TODO 2：完整轨迹片段
+### TODO 2: Full trajectory snippet
 
-找到：
+Find:
 ```
-> 📁 **TODO**：跑真实 DeepSeek 后，把 `./data/trajectories/{run_id}.json` 的内容...
+> 📁 **TODO**: after running real DeepSeek, paste the content of `./data/trajectories/{run_id}.json`...
 ```
 
-替换为：
+Replace with:
 ```markdown
-> 📁 完整轨迹见 [`examples/sample_real_run.json`](examples/sample_real_run.json)（基于真实 DeepSeek-V3 运行）
+> 📁 Full trajectory is available at [`examples/sample_real_run.json`](examples/sample_real_run.json) (produced by a real DeepSeek-V3 run)
 
 ![Real Run Screenshot](docs/images/real_run_screenshot.png)
 ```
 
-### TODO 3：删除"当前展示"警告
+### TODO 3: Remove the "currently mock" warning
 
-把这一节开头的警告框删掉或改写：
+Find the warning box at the top of this section:
 ```markdown
-> ⚠️ **当前展示**：以下示例使用 mock 模式...
+> ⚠️ **Currently shown**: the example below uses mock mode...
 ```
-改成：
+
+Change it to:
 ```markdown
-> ✅ **真实运行**：以下数据来自 DeepSeek-V3 在 2026-09-XX 的真实调用。
+> ✅ **Real run**: the data below comes from a real DeepSeek-V3 call on 2026-09-XX.
 ```
 
 ---
 
-## Step 8：更新 ASCII 时间线（3 分钟，可选但强烈推荐）
+## Step 8: Update the ASCII timeline (3 minutes, optional but strongly recommended)
 
-README 里的 ASCII 时间线是基于"预期"写的。跑出真实结果后，**强烈建议手动更新**真实数据：
+The ASCII timeline in README was written based on "expectations". After you get the real result, **we strongly recommend manually updating** with the real data:
 
-- 替换每个 Step 的 `Thought`、`Action`、`Observation` 为真实内容
-- 替换 `Tokens: XXX in / XXX out | XXXms` 为真实数字
-- 替换 `Total: 4 steps | 722 tokens | 760ms` 为真实统计
+- Replace every Step's `Thought`, `Action`, `Observation` with the real content
+- Replace `Tokens: XXX in / XXX out | XXXms` with the real numbers
+- Replace `Total: 4 steps | 722 tokens | 760ms` with the real statistics
 
-这一段是仓库首页**第一眼看到**的内容，必须真实。
+This is the section the repo homepage **shows first**, so it must be real.
 
 ---
 
-## Step 9：提交到 Git（1 分钟）
+## Step 9: Commit to git (1 minute)
 
 ```bash
 cd C:\Users\35713\Desktop\MultiAgentLab
@@ -186,48 +187,48 @@ git push origin main
 
 ---
 
-## Step 10：检查 GitHub 显示效果（2 分钟）
+## Step 10: Check the GitHub rendering (2 minutes)
 
-打开你的 GitHub 仓库，**确认这些都能正常显示**：
+Open your GitHub repo and **confirm these all render correctly**:
 
-- [ ] README 顶部项目亮点 ✓
-- [ ] ASCII 时间线渲染正常（不被代码块破坏）✓
-- [ ] 截图清晰可见 ✓
-- [ ] 表格对齐 ✓
-- [ ] 链接可点击（Trajectory Format Compatibility 那节）✓
+- [ ] Highlights at the top of README ✓
+- [ ] ASCII timeline renders correctly (not broken by code blocks) ✓
+- [ ] Screenshot is clearly visible ✓
+- [ ] Tables align properly ✓
+- [ ] Links are clickable (the Trajectory Format Compatibility section) ✓
 
 ---
 
-## 🎁 Bonus：录个 1 分钟 Demo 视频
+## 🎁 Bonus: Record a 1-minute demo video
 
-如果你想让 GitHub 项目更出彩，可以：
-1. 用 Windows 自带录屏（`Win + G`）录一个 1 分钟的 demo
-2. 把视频上传到 B站/YouTube
-3. 在 README 顶部加一行：
+If you want the GitHub project to stand out more, you can:
+1. Use Windows' built-in screen recorder (`Win + G`) to record a 1-minute demo
+2. Upload the video to Bilibili / YouTube
+3. Add a line at the top of README:
    ```markdown
-   🎬 [观看 1 分钟 Demo 视频](https://www.bilibili.com/video/BVxxxxx)
+   🎬 [Watch the 1-minute demo](https://www.bilibili.com/video/BVxxxxx)
    ```
 
-我也可以帮你**自动生成带中文讲解的演示视频**（用 edge-tts + 屏幕录屏），你说一声就开干。
+I can also **auto-generate a demo video with Chinese narration** for you (using edge-tts + screen recording) — just say the word.
 
 ---
 
-## ❓ 常见问题
+## ❓ FAQ
 
-**Q1：跑真实 LLM 时 planner 输出不是 JSON 怎么办？**
-A：这是常见问题。说明你的 LLM 没按格式输出。让我帮你加更强的 prompt 或重试机制。
+**Q1: What if the planner doesn't output JSON when running with a real LLM?**
+A: This is a common issue. It means your LLM didn't follow the format. Let me add a stronger prompt or retry mechanism.
 
-**Q2：token 用得太快怎么办？**
-A：检查是不是开了 verbose 日志。在 `.env` 里把 `LOG_LEVEL=WARNING` 即可。
+**Q2: Tokens are being consumed too fast?**
+A: Check whether verbose logging is enabled. In `.env`, set `LOG_LEVEL=WARNING`.
 
-**Q3：DeepSeek 响应慢怎么办？**
-A：默认 60 秒超时。可以设 `REQUEST_TIMEOUT=30` 取消慢任务。
+**Q3: DeepSeek responses are slow?**
+A: Default timeout is 60s. You can set `REQUEST_TIMEOUT=30` to cancel slow tasks.
 
-**Q4：想换成 GPT-4o 效果更好怎么办？**
-A：在 `.env` 里改 `LLM_PROVIDER=openai` + 填 `OPENAI_API_KEY`，但成本是 DeepSeek 的 3 倍。
+**Q4: Want to switch to GPT-4o for better quality?**
+A: In `.env`, set `LLM_PROVIDER=openai` + fill in `OPENAI_API_KEY`, but the cost is 3× of DeepSeek.
 
 ---
 
-## 📞 跑出问题随时叫我
+## 📞 Call me anytime if something breaks
 
-把**完整的错误信息**（终端输出）贴给我，我马上帮你 debug。
+Paste the **complete error output** from the terminal and I'll debug it for you right away.

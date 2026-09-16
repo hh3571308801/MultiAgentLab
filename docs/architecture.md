@@ -1,61 +1,61 @@
-# 架构设计文档
+# Architecture Design Document
 
-> 本文档说明 MultiAgentLab 的设计动机、技术选型、模块边界与扩展点。
-
----
-
-## 一、研究动机
-
-### 1.1 现有 Agent 框架的痛点
-
-| 框架 | 优点 | 缺点（研究空白）|
-|------|------|----------------|
-| AutoGPT | 全自主 | 轨迹不可控、Token 爆炸、缺乏评测 |
-| LangChain | 灵活 | 太底层，缺少"协作"抽象 |
-| CrewAI | 角色化 | 缺乏失败分析、不可观测 |
-| AgentVerse | 多 Agent | 没有评测、不可解释 |
-
-**共同缺陷**：
-1. 只关心"能不能跑通"，不关心"**跑得好不好**"
-2. 缺乏系统化的**可观测性**（轨迹可视化）
-3. 缺乏**可解释性**（为什么失败）
-4. 缺乏**横向评测**（A vs B vs C 哪个更好）
-
-### 1.2 本项目的核心研究问题
-
-> **如何系统化地观测、评测、可解释多 LLM Agent 协作过程？**
-
-三个子问题：
-- Q1：能否用一个统一 schema 记录多 Agent 协作的完整轨迹？
-- Q2：能否设计一组指标量化"协作质量"？
-- Q3：能否自动归因失败原因，并给出改进建议？
+> This document explains the design motivation, technology choices, module boundaries, and extension points of MultiAgentLab.
 
 ---
 
-## 二、模块划分
+## 1. Research Motivation
+
+### 1.1 Pain points of existing Agent frameworks
+
+| Framework | Strengths | Weaknesses (research gaps) |
+|-----------|-----------|----------------------------|
+| AutoGPT | Fully autonomous | Uncontrollable trajectory, token explosion, no evaluation |
+| LangChain | Flexible | Too low-level, lacks a "collaboration" abstraction |
+| CrewAI | Role-based | No failure analysis, not observable |
+| AgentVerse | Multi-agent | No evaluation, not explainable |
+
+**Common shortcomings**:
+1. They only care about "can it run end-to-end", not "**how well it runs**"
+2. Lack systematic **observability** (trajectory visualization)
+3. Lack **explainability** (why did it fail)
+4. Lack **horizontal evaluation** (which is better: A vs B vs C)
+
+### 1.2 Core research question of this project
+
+> **How can we systematically observe, evaluate, and explain the multi-LLM-Agent collaboration process?**
+
+Three sub-questions:
+- Q1: Can a unified schema record the full trajectory of multi-agent collaboration?
+- Q2: Can a set of metrics be designed to quantify "collaboration quality"?
+- Q3: Can we automatically attribute failure causes and suggest improvements?
+
+---
+
+## 2. Module Layout
 
 ```
 backend/
-├── config.py            # 单一职责：环境变量加载与校验
+├── config.py            # Single responsibility: env var loading & validation
 ├── llm/
-│   └── client.py        # 单一职责：LLM API 调用（多 provider 抽象）
+│   └── client.py        # Single responsibility: LLM API calls (multi-provider abstraction)
 ├── agents/
-│   ├── base.py          # 抽象基类：所有 Agent 的统一接口
-│   ├── planner.py       # 任务规划
-│   ├── executor.py      # 工具执行
-│   └── critic.py        # 反思批评
+│   ├── base.py          # Abstract base class: unified interface for all Agents
+│   ├── planner.py       # Task planning
+│   ├── executor.py      # Tool execution
+│   └── critic.py        # Reflection / critic
 ├── tools/
-│   ├── calculator.py    # 原子工具 1
-│   └── search.py        # 原子工具 2
+│   ├── calculator.py    # Atomic tool 1
+│   └── search.py        # Atomic tool 2
 ├── trajectory/
-│   ├── schema.py        # 轨迹数据模型（Pydantic）
-│   └── recorder.py      # 轨迹写入/导出
-├── orchestrator.py      # 调度核心：Agent 间消息传递
+│   ├── schema.py        # Trajectory data model (Pydantic)
+│   └── recorder.py      # Trajectory writer / exporter
+├── orchestrator.py      # Scheduling core: message passing between Agents
 └── api/
-    └── routes.py        # HTTP 层
+    └── routes.py        # HTTP layer
 ```
 
-### 2.1 Agent 基类（base.py）
+### 2.1 Agent base class (base.py)
 
 ```python
 class BaseAgent(ABC):
@@ -64,16 +64,16 @@ class BaseAgent(ABC):
 
     @abstractmethod
     async def act(self, context: Context) -> Step:
-        """根据当前上下文产出一个 Step（thought + action）"""
+        """Produce a Step (thought + action) from the current context"""
         ...
 
     @abstractmethod
     def parse_action(self, raw: str) -> Action:
-        """从 LLM 输出解析结构化动作"""
+        """Parse a structured action from LLM output"""
         ...
 ```
 
-### 2.2 Orchestrator 调度流程
+### 2.2 Orchestrator scheduling flow
 
 ```
 ┌─────────┐    ┌──────────┐    ┌──────────┐
@@ -91,39 +91,39 @@ class BaseAgent(ABC):
                          │
               ┌──────────┴──────────┐
               ▼                     ▼
-        满意 → END             不满意 → REPLAN
+        Satisfied → END         Not satisfied → REPLAN
 ```
 
-最大轮数限制（避免死循环）：默认 5 轮，可配置。
+Max round limit (to avoid infinite loops): default 5, configurable.
 
 ---
 
-## 三、数据模型
+## 3. Data Model
 
-### 3.1 轨迹 Schema（兼容 Shellloop）
+### 3.1 Trajectory schema (Shellloop-compatible)
 
-参见 `backend/trajectory/schema.py`。完整字段：
+See `backend/trajectory/schema.py`. Full fields:
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `run_id` | UUID | 一次任务运行的唯一 ID |
-| `task` | string | 用户原始任务描述 |
-| `agents` | List[AgentTrace] | 参与的 Agent 列表 |
-| `steps` | List[Step] | 按时间顺序的所有步骤 |
-| `final_answer` | string | 最终输出 |
+| Field | Type | Description |
+|-------|------|-------------|
+| `run_id` | UUID | Unique ID for one task run |
+| `task` | string | Original user task description |
+| `agents` | List[AgentTrace] | List of participating Agents |
+| `steps` | List[Step] | All steps in chronological order |
+| `final_answer` | string | Final output |
 | `status` | enum | success / failed / timeout |
-| `total_tokens` | int | 总消耗 Token |
-| `total_latency_ms` | int | 总耗时（毫秒）|
+| `total_tokens` | int | Total tokens consumed |
+| `total_latency_ms` | int | Total time (milliseconds) |
 
-### 3.2 Step 详细字段
+### 3.2 Step detailed fields
 
 ```python
 class Step(BaseModel):
     step_id: int
     agent_role: str  # planner / executor / critic
-    thought: str  # 思考过程
-    action: Optional[Action]  # 调用的工具
-    observation: Optional[str]  # 工具返回
+    thought: str  # Reasoning process
+    action: Optional[Action]  # Tool invocation
+    observation: Optional[str]  # Tool return value
     token_in: int
     token_out: int
     latency_ms: int
@@ -132,24 +132,22 @@ class Step(BaseModel):
 
 ---
 
-## 四、评测指标设计（v0.3 阶段）
+## 4. Evaluation Metric Design (v0.3 stage)
 
-| 指标 | 公式 | 意义 |
-|------|------|------|
-| 成功率 (SR) | 成功运行数 / 总运行数 | 基本能力 |
-| 平均步骤数 (AvgSteps) | 总步骤 / 成功运行数 | 效率 |
-| Token 效率 (TokEff) | 成功数 / 总 Token | 经济性 |
-| 步骤冗余度 (Redundancy) | 1 - 有效步骤 / 总步骤 | 反思能力 |
-| 幻觉率 (Hallucination) | LLM-as-Judge 判为幻觉 / 总步骤 | 准确性 |
-| 可解释性 (Explainability) | LLM-as-Judge 评分均值 | 透明度 |
-
----
-
-## 五、扩展点
-
-1. **新增 Agent**：继承 `BaseAgent`，在 `agents/` 添加文件
-2. **新增工具**：在 `tools/` 添加函数，在 `executor.py` 注册
-3. **替换 LLM Provider**：修改 `.env` 中 `LLM_PROVIDER` 即可
-4. **接入评测**：实现 `backend/evaluation/` 子模块
+| Metric | Formula | Meaning |
+|--------|---------|---------|
+| Success rate (SR) | successful runs / total runs | Basic capability |
+| Avg steps (AvgSteps) | total steps / successful runs | Efficiency |
+| Token efficiency (TokEff) | success count / total tokens | Economy |
+| Step redundancy (Redundancy) | 1 - effective steps / total steps | Reflection capability |
+| Hallucination rate | LLM-as-Judge hallucination count / total steps | Accuracy |
+| Explainability | mean LLM-as-Judge score | Transparency |
 
 ---
+
+## 5. Extension Points
+
+1. **Add a new Agent**: inherit `BaseAgent` and add a file under `agents/`
+2. **Add a new tool**: add the function under `tools/` and register it in `executor.py`
+3. **Swap LLM provider**: change `LLM_PROVIDER` in `.env`
+4. **Plug in evaluation**: implement a `backend/evaluation/` sub-module
