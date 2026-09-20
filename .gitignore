@@ -32,6 +32,7 @@ docs/images/local_*.png
 
 # 一次性推送工具（本地辅助，不入库）
 push_to_github.py
+push_v02.py
 
 # OS
 .DS_Store
@@ -45,6 +46,8 @@ htmlcov/
 # Node / Frontend
 node_modules/
 dist/
+# ...but ship the built UI so visitors get the viewer without installing Node
+!frontend/dist/
 *.local
 npm_log.txt
 frontend.log

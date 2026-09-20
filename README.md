@@ -78,7 +78,8 @@ cp .env.example .env
 
 ```bash
 python -m backend.main
-# Visit http://localhost:8000/docs for the API documentation
+# Visit http://localhost:8000/ for the trajectory viewer
+# or http://localhost:8000/docs for the API documentation
 ```
 
 ### 4. Run your first demo
@@ -91,7 +92,15 @@ curl -X POST http://localhost:8000/api/v1/run \
 
 Expected output — three agents (Planner / Executor / Critic) collaborating to solve the math problem "Alice has 15 dollars, bought 3 pencils at 2 dollars each. How much does she have left?" with a complete trajectory.
 
-### 5. Launch the trajectory viewer (v0.2)
+### 5. Open the trajectory viewer (v0.2)
+
+The UI ships pre-built in `frontend/dist` — just visit:
+
+```
+http://localhost:8000/
+```
+
+No Node.js required. To develop the frontend instead:
 
 ```bash
 cd frontend
@@ -318,7 +327,7 @@ MultiAgentLab/
 │   ├── orchestrator.py      # Multi-agent scheduling core
 │   └── api/
 │       └── routes.py        # API routes
-├── frontend/                # Vue3 frontend (placeholder)
+├── frontend/                # Vue3 + ECharts trajectory viewer (served by the backend)
 ├── examples/                # Example tasks
 │   ├── math_problem.json
 │   ├── weather_query.json

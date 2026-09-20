@@ -12,8 +12,11 @@ from __future__ import annotations
 
 import logging
 import sys
+from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from backend import __version__
 from backend.api import router as api_router
@@ -49,8 +52,30 @@ async def startup_event() -> None:
     logger.info("=" * 60)
 
 
+# CORS：允许前端单独部署（如 Vercel / GitHub Pages）时跨域访问 API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 # 注册路由
 app.include_router(api_router)
+
+
+# 挂载前端构建产物（frontend/dist）：clone 后无需 Node，一条命令即可访问完整 UI
+_DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+if _DIST_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=str(_DIST_DIR), html=True), name="frontend")
+else:
+    logger.info(
+        "frontend/dist not found — UI disabled. "
+        "Build it with `cd frontend && npm install && npm run build`, "
+        "or use the dev server (`npm run dev`)."
+    )
 
 
 if __name__ == "__main__":
