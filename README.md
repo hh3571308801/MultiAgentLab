@@ -91,6 +91,19 @@ curl -X POST http://localhost:8000/api/v1/run \
 
 Expected output — three agents (Planner / Executor / Critic) collaborating to solve the math problem "Alice has 15 dollars, bought 3 pencils at 2 dollars each. How much does she have left?" with a complete trajectory.
 
+### 5. Launch the trajectory viewer (v0.2)
+
+```bash
+cd frontend
+npm install
+npm run dev
+# Visit http://localhost:5173 — pick a run and watch the agents work
+```
+
+![Trajectory Viewer](docs/assets/trajectory_viewer.png)
+
+The viewer shows every step with its agent role (🟣 Planner / 🔵 Executor / 🟢 Critic), the agent's thought, tool calls with arguments, observations, plus a per-step tokens & latency chart.
+
 ---
 
 ## 🎯 Three Run Modes
@@ -337,17 +350,17 @@ MultiAgentLab/
 
 ## 🎯 Roadmap (Planned / In progress / Backlog)
 
-### ✅ v0.1 (MVP skeleton — current stage)
+### ✅ v0.1 (MVP skeleton — done)
 - [x] FastAPI framework + multi-agent scheduling
 - [x] Planner / Executor / Critic three-role loop
 - [x] Full trajectory recording (compatible with Shellloop schema)
 - [x] DeepSeek / OpenAI dual providers
 - [x] Calculator tool
 
-### 🔜 v0.2 (Visualization)
-- [ ] Vue3 + ECharts trajectory timeline
-- [ ] Token flow diagram
-- [ ] Failure node highlight
+### ✅ v0.2 (Visualization — done)
+- [x] Vue3 + Vite frontend
+- [x] Step-by-step trajectory timeline with role color coding
+- [x] Per-step tokens & latency chart (ECharts)
 
 ### 🔜 v0.3 (Evaluation module)
 - [ ] Success rate / step redundancy / token efficiency metrics
